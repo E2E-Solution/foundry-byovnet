@@ -1,0 +1,21 @@
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.tfplan
+tfplan
+
+# Local working backups and logs
+backup/
+*.log
+
+# Environment-specific variables (contains subscription ID and network topology)
+*.tfvars
+*.tfvars.json
