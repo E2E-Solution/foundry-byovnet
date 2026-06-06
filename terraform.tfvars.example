@@ -1,0 +1,36 @@
+###############################################################################
+# Example variable values. Copy to terraform.tfvars and replace placeholders.
+#   cp terraform.tfvars.example terraform.tfvars
+###############################################################################
+
+subscription_id = "00000000-0000-0000-0000-000000000000"
+location        = "southeastasia"
+
+foundry_rg_name = "my-foundry-rg"
+base_name       = "byor"
+
+# Private-endpoints VNet
+pep_vnet_name   = "my-azvm-vnet"
+pep_subnet_name = "snet-private-endpoints"
+
+# Agent-services VNet (must NOT overlap the reserved 10.0.0.0/8 range)
+agent_svc_vnet_name   = "my-foundry-vnet"
+agent_svc_subnet_name = "snet-foundry-agent-services"
+
+# Subnet CIDRs for the private-endpoints VNet (address space 10.2.0.0/16)
+pep_vnet_subnet_cidrs = {
+  private_endpoints = "10.2.1.0/24"
+  bastion           = "10.2.3.0/26"
+  vm                = "10.2.3.64/26"
+}
+
+# Subnet CIDR for the agent-services VNet (address space 172.17.0.0/16)
+agent_vnet_subnet_cidrs = {
+  agent_services = "172.17.1.0/24"
+}
+
+# Optional: override default tags
+# tags = {
+#   environment = "test"
+#   workload    = "ai-foundry-byor"
+# }
