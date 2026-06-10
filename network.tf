@@ -73,7 +73,25 @@ resource "azurerm_subnet" "agent_services" {
 }
 
 # ---------------------------------------------------------------------------
-# Private DNS zones (in the Foundry RG) + links to the existing VNet.
+# VNet connectivity between agent runtime and private endpoints.
+# ---------------------------------------------------------------------------
+
+resource "azurerm_virtual_network_peering" "pep_to_agent_services" {
+  name                      = "peer-${azurerm_virtual_network.pep_vnet.name}-to-${azurerm_virtual_network.agent_services_vnet.name}"
+  resource_group_name       = azurerm_resource_group.foundry.name
+  virtual_network_name      = azurerm_virtual_network.pep_vnet.name
+  remote_virtual_network_id = azurerm_virtual_network.agent_services_vnet.id
+}
+
+resource "azurerm_virtual_network_peering" "agent_services_to_pep" {
+  name                      = "peer-${azurerm_virtual_network.agent_services_vnet.name}-to-${azurerm_virtual_network.pep_vnet.name}"
+  resource_group_name       = azurerm_resource_group.foundry.name
+  virtual_network_name      = azurerm_virtual_network.agent_services_vnet.name
+  remote_virtual_network_id = azurerm_virtual_network.pep_vnet.id
+}
+
+# ---------------------------------------------------------------------------
+# Private DNS zones (in the Foundry RG) + links to both VNets.
 # ---------------------------------------------------------------------------
 
 locals {
@@ -104,5 +122,15 @@ resource "azurerm_private_dns_zone_virtual_network_link" "this" {
   resource_group_name   = azurerm_resource_group.foundry.name
   private_dns_zone_name = azurerm_private_dns_zone.this[each.key].name
   virtual_network_id    = azurerm_virtual_network.pep_vnet.id
+  tags                  = var.tags
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "agent_services" {
+  for_each = local.private_dns_zones
+
+  name                  = "agent-vnet-link-${each.key}"
+  resource_group_name   = azurerm_resource_group.foundry.name
+  private_dns_zone_name = azurerm_private_dns_zone.this[each.key].name
+  virtual_network_id    = azurerm_virtual_network.agent_services_vnet.id
   tags                  = var.tags
 }

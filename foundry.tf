@@ -157,17 +157,17 @@ module "ai_foundry" {
 # still requires it before any project-level capabilityHost can be created.
 # See: project capabilityHost PUT returns 400 "Foundry Account capabilityHost
 # Not Found" without it.
-# resource "azapi_resource" "account_capability_host" {
-#   type      = "Microsoft.CognitiveServices/accounts/capabilityHosts@2025-04-01-preview"
-#   name      = "ai-agent-service"
-#   parent_id = module.ai_foundry.ai_foundry_id
+resource "azapi_resource" "account_capability_host" {
+  type      = "Microsoft.CognitiveServices/accounts/capabilityHosts@2025-04-01-preview"
+  name      = "ai-agent-service"
+  parent_id = module.ai_foundry.ai_foundry_id
 
-#   body = {
-#     properties = {
-#       capabilityHostKind = "Agents"
-#       customerSubnet     = azurerm_subnet.agent_services.id
-#     }
-#   }
+  body = {
+    properties = {
+      capabilityHostKind = "Agents"
+      customerSubnet     = azurerm_subnet.agent_services.id
+    }
+  }
 
-#   schema_validation_enabled = false
-# }
+  schema_validation_enabled = false
+}

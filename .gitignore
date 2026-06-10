@@ -19,3 +19,12 @@ backup/
 # Environment-specific variables (contains subscription ID and network topology)
 *.tfvars
 *.tfvars.json
+
+# Sensitive/local files
+.azure/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.pem
+*.key
+.env*

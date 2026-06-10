@@ -25,9 +25,10 @@ resource "azapi_resource" "ai_search" {
           aadAuthFailureMode = "http401WithBearerChallenge"
         }
       }
-      publicNetworkAccess = "Enabled"
+      publicNetworkAccess = "Disabled"
       networkRuleSet = {
-        bypass = "None"
+        bypass  = "None"
+        ipRules = []
       }
     }
   }
@@ -78,9 +79,11 @@ module "key_vault" {
   enabled_for_template_deployment = true
 
   network_acls = {
-    default_action = "Allow"
-    bypass         = "AzureServices"
+    default_action = "Deny"
+    bypass         = "None"
   }
+
+  public_network_access_enabled = false
 
   diagnostic_settings = {
     keyvault = {
@@ -107,13 +110,27 @@ module "storage_account" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
   version = "0.6.7"
 
-  name                     = module.naming.storage_account.name_unique
-  location                 = azurerm_resource_group.foundry.location
-  resource_group_name      = azurerm_resource_group.foundry.name
-  access_tier              = "Hot"
-  account_kind             = "StorageV2"
-  account_replication_type = "ZRS"
-  account_tier             = "Standard"
+  name                          = module.naming.storage_account.name_unique
+  location                      = azurerm_resource_group.foundry.location
+  resource_group_name           = azurerm_resource_group.foundry.name
+  access_tier                   = "Hot"
+  account_kind                  = "StorageV2"
+  account_replication_type      = "ZRS"
+  account_tier                  = "Standard"
+  https_traffic_only_enabled    = true
+  min_tls_version               = "TLS1_2"
+  public_network_access_enabled = false
+  shared_access_key_enabled     = false
+
+  network_rules = {
+    bypass         = ["AzureServices"]
+    default_action = "Deny"
+    ip_rules       = []
+    private_link_access = [{
+      endpoint_resource_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/providers/Microsoft.Security/datascanners/storageDataScanner"
+      endpoint_tenant_id   = data.azurerm_client_config.current.tenant_id
+    }]
+  }
 
   #   diagnostic_settings_blob = {
   #     blob = {
@@ -175,22 +192,13 @@ module "cosmosdb" {
     }
   }
 
-  ip_range_filter = [
-    "168.125.123.255",
-    "170.0.0.0/24",
-    "0.0.0.0",
-    "104.42.195.92",
-    "40.76.54.131",
-    "52.176.6.30",
-    "52.169.50.45",
-    "52.187.184.26",
-  ]
+  ip_range_filter = []
 
   local_authentication_disabled         = true
   multiple_write_locations_enabled      = false
-  network_acl_bypass_for_azure_services = true
+  network_acl_bypass_for_azure_services = false
   partition_merge_enabled               = false
-  public_network_access_enabled         = true
+  public_network_access_enabled         = false
 
   private_endpoints = {
     "cosmosdb" = {
