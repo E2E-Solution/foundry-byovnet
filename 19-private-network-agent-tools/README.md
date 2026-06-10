@@ -70,10 +70,10 @@ Use the table below to choose the right infrastructure template for your scenari
 
 ## Deploy to Azure
 
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fazure-ai-foundry%2Ffoundry-samples%2Frefs%2Fheads%2Fmain%2Finfrastructure%2Finfrastructure-setup-bicep%2F19-private-network-agent-tools%2Fazuredeploy.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2Fazure-ai-foundry%2Ffoundry-samples%2Frefs%2Fheads%2Fmain%2Finfrastructure%2Finfrastructure-setup-bicep%2F19-private-network-agent-tools%2FcreateUiDefinition.json)
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FE2E-Solution%2Ffoundry-byovnet%2Frefs%2Fheads%2Ffeature%2Fstatic-ip-pe%2F19-private-network-agent-tools%2Fazuredeploy.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FE2E-Solution%2Ffoundry-byovnet%2Frefs%2Fheads%2Ffeature%2Fstatic-ip-pe%2F19-private-network-agent-tools%2FcreateUiDefinition.json)
 
-> The "Deploy to Azure" button uses [`createUiDefinition.json`](./createUiDefinition.json) to render a guided wizard in the Azure Portal: real VNet/subnet pickers, resource pickers for AI Search / Cosmos / Storage, and per-field validation \u2014 instead of the default flat list of 27 text boxes.
-
+> This forked button uses `E2E-Solution/foundry-byovnet` branch `feature/static-ip-pe`. The portal wizard is prefilled for the Alpha and Charlie Southeast Asia redeploy scenario, including existing VNet/subnet resource IDs, existing private DNS zones, and static inbound private endpoint IPs in `10.1.1.15` through `10.1.1.21`.
+> The button uses [`createUiDefinition.json`](./createUiDefinition.json) to render a guided wizard in the Azure Portal with prefilled VNet/subnet IDs, resource pickers for AI Search, Cosmos DB, and Storage, and per-field validation instead of the default flat parameter list.
 
 ---
 

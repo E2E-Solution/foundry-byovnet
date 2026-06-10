@@ -64,8 +64,8 @@ param existingAgentSubnetResourceId = '/subscriptions/27b58ab1-f52c-498e-a03d-25
 // Private endpoints will be created in the existing Alpha PE subnet.
 param existingPeSubnetResourceId = '/subscriptions/27b58ab1-f52c-498e-a03d-255b76c80a00/resourceGroups/alpha-azvm-rg/providers/Microsoft.Network/virtualNetworks/alpha-azvm-vnet/subnets/snet-private-endpoints'
 
-// Leave empty to let the template create the MCP subnet in `charlie-foundry-vnet`.
-param existingMcpSubnetResourceId = ''
+// Reuse the existing MCP subnet in `charlie-foundry-vnet` so redeployments do not modify shared network settings.
+param existingMcpSubnetResourceId = '/subscriptions/27b58ab1-f52c-498e-a03d-255b76c80a00/resourceGroups/charlie-foundry-rg/providers/Microsoft.Network/virtualNetworks/charlie-foundry-vnet/subnets/snet-mcp'
 
 // -----------------------------------------------------------------------------
 // Backing resources

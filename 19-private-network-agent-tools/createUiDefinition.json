@@ -12,7 +12,7 @@
           "allowedValues": [
             "westus", "westus2", "westus3", "eastus", "eastus2", "southcentralus", "canadaeast",
             "westeurope", "uksouth", "swedencentral", "francecentral", "germanywestcentral", "italynorth", "spaincentral", "norwayeast", "polandcentral", "switzerlandnorth",
-            "japaneast", "koreacentral", "australiaeast", "southindia",
+            "japaneast", "koreacentral", "australiaeast", "southindia", "southeastasia",
             "uaenorth", "southafricanorth", "brazilsouth"
           ]
         }
@@ -28,7 +28,7 @@
             "name": "aiServices",
             "type": "Microsoft.Common.TextBox",
             "label": "AI Services name prefix",
-            "defaultValue": "aifoundry",
+            "defaultValue": "cfndrysea",
             "toolTip": "2-40 lowercase letters or digits. A 4-character random suffix is appended to make the resource name unique.",
             "constraints": {
               "required": true,
@@ -51,13 +51,13 @@
             "name": "displayName",
             "type": "Microsoft.Common.TextBox",
             "label": "Project display name",
-            "defaultValue": "network secured agent project"
+            "defaultValue": "charlie network secured agent project southeastasia existing network"
           },
           {
             "name": "projectDescription",
             "type": "Microsoft.Common.TextBox",
             "label": "Project description",
-            "defaultValue": "A project for the AI Foundry account with network secured deployed Agent",
+            "defaultValue": "A project for validating Azure AI Foundry private VNet deployment in Southeast Asia with existing network and DNS zones",
             "multiLine": true
           }
         ]
@@ -70,10 +70,11 @@
             "name": "modelName",
             "type": "Microsoft.Common.DropDown",
             "label": "Model",
-            "defaultValue": "gpt-4o-mini",
+            "defaultValue": "gpt-4.1",
             "constraints": {
               "required": true,
               "allowedValues": [
+                { "label": "gpt-4.1",      "value": "gpt-4.1" },
                 { "label": "gpt-4o-mini", "value": "gpt-4o-mini" },
                 { "label": "gpt-4o",      "value": "gpt-4o" },
                 { "label": "gpt-4",       "value": "gpt-4" }
@@ -84,7 +85,7 @@
             "name": "modelVersion",
             "type": "Microsoft.Common.TextBox",
             "label": "Model version",
-            "defaultValue": "2024-07-18",
+            "defaultValue": "2025-04-14",
             "toolTip": "API version of the selected model."
           },
           {
@@ -105,7 +106,7 @@
             "label": "Capacity (TPM x 1000)",
             "min": 1,
             "max": 300,
-            "defaultValue": 30,
+            "defaultValue": 1,
             "showStepMarkers": false
           }
         ]
@@ -118,7 +119,7 @@
             "name": "vnetMode",
             "type": "Microsoft.Common.OptionsGroup",
             "label": "Virtual Network",
-            "defaultValue": "Create new",
+            "defaultValue": "existing",
             "toolTip": "Create a brand-new VNet, or use an existing one (recommended for shared/enterprise environments).",
             "constraints": {
               "required": true,
@@ -172,38 +173,60 @@
           },
 
           {
-            "name": "existingVnet",
-            "type": "Microsoft.Network.VirtualNetworkCombo",
-            "label": {
-              "virtualNetwork": "Existing VNet",
-              "subnets": "Subnets"
-            },
-            "visible": "[equals(steps('network').vnetMode, 'existing')]",
-            "scope": {
-              "subscriptionId": "[subscription().subscriptionId]"
-            },
-            "subnets": {
-              "agentSubnet": {
-                "label": "Agent subnet",
-                "constraints": { "minAddressCount": 32, "requireContiguousAddresses": true }
-              },
-              "peSubnet": {
-                "label": "Private-endpoint subnet",
-                "constraints": { "minAddressCount": 32, "requireContiguousAddresses": true }
-              },
-              "mcpSubnet": {
-                "label": "MCP subnet",
-                "constraints": { "minAddressCount": 32, "requireContiguousAddresses": true }
-              }
-            }
-          },
-          {
             "name": "existingSubnetReuseInfo",
             "type": "Microsoft.Common.InfoBox",
             "visible": "[equals(steps('network').vnetMode, 'existing')]",
             "options": {
               "icon": "Info",
-              "text": "When using an existing VNet, the subnets you select above will be referenced as-is. Their existing NSGs, route tables, and delegations are preserved."
+              "text": "This fork is prefilled for the Alpha and Charlie Southeast Asia topology. The existing VNet and subnet IDs below are referenced as-is, preserving their current NSGs, route tables, and delegations."
+            }
+          },
+          {
+            "name": "existingVnetResourceIdText",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Existing agent VNet resource ID",
+            "defaultValue": "/subscriptions/27b58ab1-f52c-498e-a03d-255b76c80a00/resourceGroups/charlie-foundry-rg/providers/Microsoft.Network/virtualNetworks/charlie-foundry-vnet",
+            "visible": "[equals(steps('network').vnetMode, 'existing')]",
+            "constraints": {
+              "required": true,
+              "regex": "^/subscriptions/.+/resourceGroups/.+/providers/Microsoft.Network/virtualNetworks/.+$",
+              "validationMessage": "Must be a valid virtual network ARM resource ID."
+            }
+          },
+          {
+            "name": "existingAgentSubnetResourceIdText",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Existing agent subnet resource ID",
+            "defaultValue": "/subscriptions/27b58ab1-f52c-498e-a03d-255b76c80a00/resourceGroups/charlie-foundry-rg/providers/Microsoft.Network/virtualNetworks/charlie-foundry-vnet/subnets/snet-agent-services-foundry2",
+            "visible": "[equals(steps('network').vnetMode, 'existing')]",
+            "constraints": {
+              "required": true,
+              "regex": "^/subscriptions/.+/resourceGroups/.+/providers/Microsoft.Network/virtualNetworks/.+/subnets/.+$",
+              "validationMessage": "Must be a valid subnet ARM resource ID."
+            }
+          },
+          {
+            "name": "existingPeSubnetResourceIdText",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Existing private endpoint subnet resource ID",
+            "defaultValue": "/subscriptions/27b58ab1-f52c-498e-a03d-255b76c80a00/resourceGroups/alpha-azvm-rg/providers/Microsoft.Network/virtualNetworks/alpha-azvm-vnet/subnets/snet-private-endpoints",
+            "visible": "[equals(steps('network').vnetMode, 'existing')]",
+            "constraints": {
+              "required": true,
+              "regex": "^/subscriptions/.+/resourceGroups/.+/providers/Microsoft.Network/virtualNetworks/.+/subnets/.+$",
+              "validationMessage": "Must be a valid subnet ARM resource ID."
+            }
+          },
+          {
+            "name": "existingMcpSubnetResourceIdText",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Existing MCP subnet resource ID",
+            "defaultValue": "/subscriptions/27b58ab1-f52c-498e-a03d-255b76c80a00/resourceGroups/charlie-foundry-rg/providers/Microsoft.Network/virtualNetworks/charlie-foundry-vnet/subnets/snet-mcp",
+            "visible": "[equals(steps('network').vnetMode, 'existing')]",
+            "constraints": {
+              "required": false,
+              "regex": "^$|^/subscriptions/.+/resourceGroups/.+/providers/Microsoft.Network/virtualNetworks/.+/subnets/.+$",
+              "validationMessage": "Must be empty or a valid subnet ARM resource ID."
             }
           }
         ]
@@ -267,6 +290,7 @@
       "modelVersion":   "[steps('model').modelVersion]",
       "modelSkuName":   "[steps('model').modelSkuName]",
       "modelCapacity":  "[steps('model').modelCapacity]",
+      "deploymentTimestamp": "20260609020000",
 
       "vnetName":           "[if(equals(steps('network').vnetMode, 'new'), steps('network').newVnetName, 'agent-vnet')]",
       "vnetAddressPrefix":  "[if(equals(steps('network').vnetMode, 'new'), steps('network').newVnetAddressPrefix, '')]",
@@ -274,15 +298,61 @@
       "peSubnetPrefix":     "[if(equals(steps('network').vnetMode, 'new'), steps('network').newPeSubnetPrefix, '')]",
       "mcpSubnetPrefix":    "[if(equals(steps('network').vnetMode, 'new'), steps('network').newMcpSubnetPrefix, '')]",
 
-      "existingVnetResourceId":         "[if(equals(steps('network').vnetMode, 'existing'), steps('network').existingVnet.virtualNetwork.id,        '')]",
-      "existingAgentSubnetResourceId":  "[if(equals(steps('network').vnetMode, 'existing'), steps('network').existingVnet.subnets.agentSubnet.id,   '')]",
-      "existingPeSubnetResourceId":     "[if(equals(steps('network').vnetMode, 'existing'), steps('network').existingVnet.subnets.peSubnet.id,      '')]",
-      "existingMcpSubnetResourceId":    "[if(equals(steps('network').vnetMode, 'existing'), steps('network').existingVnet.subnets.mcpSubnet.id,     '')]",
+      "existingVnetResourceId":         "[if(equals(steps('network').vnetMode, 'existing'), steps('network').existingVnetResourceIdText, '')]",
+      "existingAgentSubnetResourceId":  "[if(equals(steps('network').vnetMode, 'existing'), steps('network').existingAgentSubnetResourceIdText, '')]",
+      "existingPeSubnetResourceId":     "[if(equals(steps('network').vnetMode, 'existing'), steps('network').existingPeSubnetResourceIdText, '')]",
+      "existingMcpSubnetResourceId":    "[if(equals(steps('network').vnetMode, 'existing'), steps('network').existingMcpSubnetResourceIdText, '')]",
 
       "existingAiSearchResourceId":             "[coalesce(steps('byo').aiSearch.id, '')]",
       "existingAzureCosmosDBAccountResourceId": "[coalesce(steps('byo').cosmos.id,   '')]",
       "existingAzureStorageAccountResourceId":  "[coalesce(steps('byo').storage.id,  '')]",
-      "existingFabricWorkspaceResourceId":      "[steps('byo').fabric]"
+      "existingFabricWorkspaceResourceId":      "[steps('byo').fabric]",
+
+      "existingDnsZones": {
+        "privatelink.services.ai.azure.com": { "subscriptionId": "", "resourceGroup": "alpha-foundry-rg" },
+        "privatelink.openai.azure.com": { "subscriptionId": "", "resourceGroup": "alpha-foundry-rg" },
+        "privatelink.cognitiveservices.azure.com": { "subscriptionId": "", "resourceGroup": "alpha-foundry-rg" },
+        "privatelink.search.windows.net": { "subscriptionId": "", "resourceGroup": "alpha-foundry-rg" },
+        "privatelink.blob.core.windows.net": { "subscriptionId": "", "resourceGroup": "alpha-foundry-rg" },
+        "privatelink.documents.azure.com": { "subscriptionId": "", "resourceGroup": "alpha-foundry-rg" },
+        "privatelink.fabric.microsoft.com": { "subscriptionId": "", "resourceGroup": "" }
+      },
+      "aiAccountPrivateEndpointIpConfigurations": [
+        {
+          "name": "ipconfig-cognitiveservices",
+          "properties": { "groupId": "account", "memberName": "default", "privateIPAddress": "10.1.1.17" }
+        },
+        {
+          "name": "ipconfig-openai",
+          "properties": { "groupId": "account", "memberName": "secondary", "privateIPAddress": "10.1.1.18" }
+        },
+        {
+          "name": "ipconfig-services-ai",
+          "properties": { "groupId": "account", "memberName": "third", "privateIPAddress": "10.1.1.19" }
+        }
+      ],
+      "cosmosDBPrivateEndpointIpConfigurations": [
+        {
+          "name": "ipconfig-cosmos-account",
+          "properties": { "groupId": "Sql", "memberName": "cfndryseaaxw4cosmosdb", "privateIPAddress": "10.1.1.15" }
+        },
+        {
+          "name": "ipconfig-cosmos-region",
+          "properties": { "groupId": "Sql", "memberName": "cfndryseaaxw4cosmosdb-southeastasia", "privateIPAddress": "10.1.1.16" }
+        }
+      ],
+      "aiSearchPrivateEndpointIpConfigurations": [
+        {
+          "name": "ipconfig-search",
+          "properties": { "groupId": "searchService", "memberName": "searchService", "privateIPAddress": "10.1.1.20" }
+        }
+      ],
+      "storagePrivateEndpointIpConfigurations": [
+        {
+          "name": "ipconfig-blob",
+          "properties": { "groupId": "blob", "memberName": "blob", "privateIPAddress": "10.1.1.21" }
+        }
+      ]
     }
   }
 }
