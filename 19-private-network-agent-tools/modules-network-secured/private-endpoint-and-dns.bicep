@@ -83,6 +83,18 @@ param existingDnsZones object = {
 @description('Tags applied to private endpoints and private DNS zones created by this module.')
 param resourceTags object = {}
 
+@description('Optional static IP configurations for the AI Foundry account private endpoint. Leave empty to let Azure dynamically allocate private endpoint IPs.')
+param aiAccountPrivateEndpointIpConfigurations array = []
+
+@description('Optional static IP configurations for the AI Search private endpoint. Leave empty to let Azure dynamically allocate private endpoint IPs.')
+param aiSearchPrivateEndpointIpConfigurations array = []
+
+@description('Optional static IP configurations for the Storage Blob private endpoint. Leave empty to let Azure dynamically allocate private endpoint IPs.')
+param storagePrivateEndpointIpConfigurations array = []
+
+@description('Optional static IP configurations for the Cosmos DB private endpoint. Leave empty to let Azure dynamically allocate private endpoint IPs.')
+param cosmosDBPrivateEndpointIpConfigurations array = []
+
 // ---- Resource references ----
 resource aiAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' existing = {
   name: aiAccountName
@@ -132,6 +144,7 @@ resource aiAccountPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01
   tags: resourceTags
   properties: {
     subnet: { id: effectivePeSubnetResourceId } // Deploy in customer hub subnet
+    ipConfigurations: aiAccountPrivateEndpointIpConfigurations
     privateLinkServiceConnections: [
       {
         name: '${aiAccountName}-private-link-service-connection'
@@ -155,6 +168,7 @@ resource aiSearchPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01'
   tags: resourceTags
   properties: {
     subnet: { id: effectivePeSubnetResourceId } // Deploy in customer hub subnet
+    ipConfigurations: aiSearchPrivateEndpointIpConfigurations
     privateLinkServiceConnections: [
       {
         name: '${aiSearchName}-private-link-service-connection'
@@ -178,6 +192,7 @@ resource storagePrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' 
   tags: resourceTags
   properties: {
     subnet: { id: effectivePeSubnetResourceId } // Deploy in customer hub subnet
+    ipConfigurations: storagePrivateEndpointIpConfigurations
     privateLinkServiceConnections: [
       {
         name: '${storageName}-private-link-service-connection'
@@ -198,6 +213,7 @@ resource cosmosDBPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01'
   tags: resourceTags
   properties: {
     subnet: { id: effectivePeSubnetResourceId } // Deploy in customer hub subnet
+    ipConfigurations: cosmosDBPrivateEndpointIpConfigurations
     privateLinkServiceConnections: [
       {
         name: '${cosmosDBName}-private-link-service-connection'

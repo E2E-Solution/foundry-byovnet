@@ -91,3 +91,76 @@ param existingDnsZones = {
   'privatelink.documents.azure.com': { subscriptionId: '', resourceGroup: 'alpha-foundry-rg' }
   'privatelink.fabric.microsoft.com': { subscriptionId: '', resourceGroup: '' }
 }
+
+// -----------------------------------------------------------------------------
+// Static private endpoint IPs
+// -----------------------------------------------------------------------------
+// These values preserve the private endpoint IPs previously allocated in
+// alpha-azvm-vnet/snet-private-endpoints for firewall allow-list continuity.
+param aiAccountPrivateEndpointIpConfigurations = [
+  {
+    name: 'ipconfig-cognitiveservices'
+    properties: {
+      groupId: 'account'
+      memberName: 'default'
+      privateIPAddress: '10.1.1.17'
+    }
+  }
+  {
+    name: 'ipconfig-openai'
+    properties: {
+      groupId: 'account'
+      memberName: 'secondary'
+      privateIPAddress: '10.1.1.18'
+    }
+  }
+  {
+    name: 'ipconfig-services-ai'
+    properties: {
+      groupId: 'account'
+      memberName: 'third'
+      privateIPAddress: '10.1.1.19'
+    }
+  }
+]
+
+param cosmosDBPrivateEndpointIpConfigurations = [
+  {
+    name: 'ipconfig-cosmos-account'
+    properties: {
+      groupId: 'Sql'
+      memberName: 'cfndryseaaxw4cosmosdb'
+      privateIPAddress: '10.1.1.15'
+    }
+  }
+  {
+    name: 'ipconfig-cosmos-region'
+    properties: {
+      groupId: 'Sql'
+      memberName: 'cfndryseaaxw4cosmosdb-southeastasia'
+      privateIPAddress: '10.1.1.16'
+    }
+  }
+]
+
+param aiSearchPrivateEndpointIpConfigurations = [
+  {
+    name: 'ipconfig-search'
+    properties: {
+      groupId: 'searchService'
+      memberName: 'searchService'
+      privateIPAddress: '10.1.1.20'
+    }
+  }
+]
+
+param storagePrivateEndpointIpConfigurations = [
+  {
+    name: 'ipconfig-blob'
+    properties: {
+      groupId: 'blob'
+      memberName: 'blob'
+      privateIPAddress: '10.1.1.21'
+    }
+  }
+]

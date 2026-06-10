@@ -168,6 +168,18 @@ param existingDnsZones object = {
   'privatelink.fabric.microsoft.com': { subscriptionId: '', resourceGroup: '' }
 }
 
+@description('Optional static IP configurations for the AI Foundry account private endpoint. Each item must include name, properties.groupId, properties.memberName, and properties.privateIPAddress. Leave empty to let Azure dynamically allocate private endpoint IPs.')
+param aiAccountPrivateEndpointIpConfigurations array = []
+
+@description('Optional static IP configurations for the AI Search private endpoint. Each item must include name, properties.groupId, properties.memberName, and properties.privateIPAddress. Leave empty to let Azure dynamically allocate private endpoint IPs.')
+param aiSearchPrivateEndpointIpConfigurations array = []
+
+@description('Optional static IP configurations for the Storage Blob private endpoint. Each item must include name, properties.groupId, properties.memberName, and properties.privateIPAddress. Leave empty to let Azure dynamically allocate private endpoint IPs.')
+param storagePrivateEndpointIpConfigurations array = []
+
+@description('Optional static IP configurations for the Cosmos DB private endpoint. Each item must include name, properties.groupId, properties.memberName, and properties.privateIPAddress. Leave empty to let Azure dynamically allocate private endpoint IPs.')
+param cosmosDBPrivateEndpointIpConfigurations array = []
+
 var projectName = toLower('${firstProjectName}${uniqueSuffix}')
 var cosmosDBName = toLower('${aiServices}${uniqueSuffix}cosmosdb')
 var aiSearchName = toLower('${aiServices}${uniqueSuffix}search')
@@ -327,6 +339,10 @@ module privateEndpointAndDNS 'modules-network-secured/private-endpoint-and-dns.b
     storageAccountSubscriptionId: azureStorageSubscriptionId // Subscription ID for Storage Account
     existingDnsZones: existingDnsZones
     resourceTags: resourceTags
+    aiAccountPrivateEndpointIpConfigurations: aiAccountPrivateEndpointIpConfigurations
+    aiSearchPrivateEndpointIpConfigurations: aiSearchPrivateEndpointIpConfigurations
+    storagePrivateEndpointIpConfigurations: storagePrivateEndpointIpConfigurations
+    cosmosDBPrivateEndpointIpConfigurations: cosmosDBPrivateEndpointIpConfigurations
   }
   // Dependencies on `aiDependencies` and `vnet` are implicit through param references
   // (e.g. aiAccount.outputs, aiDependencies.outputs.*, vnet.outputs.*).
